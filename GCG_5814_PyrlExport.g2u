@@ -1,0 +1,269 @@
+﻿Program.Sub.ScreenSU.Start
+Gui.SS_Form1..Create
+Gui.SS_Form1..Caption("ADP Payroll Export")
+Gui.SS_Form1..Size(9540,1755)
+Gui.SS_Form1..Position(0,0)
+Gui.SS_Form1..ForeColor(0)
+Gui.SS_Form1..Backcolor(-2147483633)
+Gui.SS_Form1..MaxButton(False)
+Gui.SS_Form1..MinButton(False)
+Gui.SS_Form1..MousePointer(0)
+Gui.SS_Form1..Sizeable(False)
+Gui.SS_Form1..Event(UnLoad,ss_form1_unload)
+Gui.SS_Form1..MinX(0)
+Gui.SS_Form1..MinY(0)
+Gui.SS_Form1.lbl_txtCCC.Create(label,"Company Code",False,1800,195,1,90,1365,True,0,"Arial",8,-2147483633,0)
+Gui.SS_Form1.lbl_txtCCC.DefaultValue("")
+Gui.SS_Form1.lbl_txtCCC.LabelStretch(True)
+Gui.SS_Form1.txtCCC.Create(textbox,"",False,1800,300,1,90,1560,True,0,"Arial",8,16777215,1)
+Gui.SS_Form1.txtCCC.Text("")
+Gui.SS_Form1.txtCCC.TabStop(True)
+Gui.SS_Form1.txtCCC.TabIndex(1)
+Gui.SS_Form1.txtCCC.DefaultValue("")
+Gui.SS_Form1.lbl_txtBBB.Create(label,"Batch ID",False,1800,195,1,90,2070,True,0,"Arial",8,-2147483633,0)
+Gui.SS_Form1.lbl_txtBBB.DefaultValue("")
+Gui.SS_Form1.lbl_txtBBB.LabelStretch(True)
+Gui.SS_Form1.txtBBB.Create(textbox,"",False,1800,300,1,90,2265,True,0,"Arial",8,16777215,1)
+Gui.SS_Form1.txtBBB.Text("")
+Gui.SS_Form1.txtBBB.TabStop(True)
+Gui.SS_Form1.txtBBB.TabIndex(2)
+Gui.SS_Form1.txtBBB.DefaultValue("")
+Gui.SS_Form1.cmdOk.Create(button)
+Gui.SS_Form1.cmdOk.Caption("Ok")
+Gui.SS_Form1.cmdOk.Size(1005,360)
+Gui.SS_Form1.cmdOk.Position(90,825)
+Gui.SS_Form1.cmdOk.TabStop(True)
+Gui.SS_Form1.cmdOk.TabIndex(5)
+Gui.SS_Form1.cmdOk.DefaultValue("")
+Gui.SS_Form1.cmdOk.Event(Click,cmdok_click)
+Gui.SS_Form1.lbl_txtFile.Create(label,"File Name",True,1800,195,1,90,120,True,0,"Arial",8,-2147483633,0)
+Gui.SS_Form1.lbl_txtFile.DefaultValue("")
+Gui.SS_Form1.lbl_txtFile.LabelStretch(True)
+Gui.SS_Form1.txtFile.Create(textbox,"",True,8805,300,1,90,330,True,0,"Arial",8,16777215,1)
+Gui.SS_Form1.txtFile.Text("")
+Gui.SS_Form1.txtFile.TabStop(True)
+Gui.SS_Form1.txtFile.TabIndex(3)
+Gui.SS_Form1.txtFile.DefaultValue("")
+Gui.SS_Form1.cmd_txtFile.Create(button)
+Gui.SS_Form1.cmd_txtFile.Caption("^")
+Gui.SS_Form1.cmd_txtFile.Size(330,330)
+Gui.SS_Form1.cmd_txtFile.Position(8940,315)
+Gui.SS_Form1.cmd_txtFile.TabStop(True)
+Gui.SS_Form1.cmd_txtFile.TabIndex(4)
+Gui.SS_Form1.cmd_txtFile.DefaultValue("")
+Gui.SS_Form1.cmd_txtFile.Event(Click,cmd_txtFile_Click)
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+v.Local.sCustomDir.Declare
+v.Local.sProjectFolder.Declare
+v.Local.sDir.Declare
+v.Local.bEx.Declare
+
+'Check Custom folder
+f.Intrinsic.String.Build("{0}\Custom",V.Caller.GlobalDir,v.Local.sCustomDir)
+f.Intrinsic.File.DirExists(v.Local.sCustomDir,v.Local.bEx)
+f.Intrinsic.Control.If(v.Local.bEx.Not)
+	f.Intrinsic.File.CreateDir(v.Local.sCustomDir)
+f.Intrinsic.Control.EndIf
+
+'Check Project folder
+f.Intrinsic.String.Build("{0}\Custom\5814",V.Caller.GlobalDir,v.Local.sProjectFolder)
+f.Intrinsic.File.DirExists(v.Local.sProjectFolder,v.Local.bEx)
+f.Intrinsic.Control.If(v.Local.bEx.Not)
+	f.Intrinsic.File.CreateDir(v.Local.sProjectFolder)
+f.Intrinsic.Control.EndIf
+
+'Check Trueview folder
+f.Intrinsic.String.Build("{0}\Custom\5814\{1}",V.Caller.GlobalDir,v.Caller.CompanyCode,v.Local.sDir)
+f.Intrinsic.File.DirExists(v.Local.sDir,v.Local.bEx)
+f.Intrinsic.Control.If(v.Local.bEx.Not)
+	f.Intrinsic.File.CreateDir(v.Local.sDir)
+f.Intrinsic.Control.EndIf
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+'BN, Dec 15 2019
+'Customer: Mark/Trece
+'ADP Export
+
+F.Intrinsic.Control.Try
+	V.Local.sError.Declare
+	
+	f.Intrinsic.Control.If(v.Caller.Hook,=,15290)
+		gui.SS_Form1.txtCCC.SetFocus
+		gui.SS_Form1..Show
+	f.Intrinsic.Control.endif
+
+f.Intrinsic.Control.catch
+	f.Intrinsic.Control.CallSub("catching","sub",v.Ambient.CurrentSubroutine,"errorno",v.Ambient.ErrorNumber,"errordesc",v.Ambient.ErrorDescription)
+f.Intrinsic.Control.EndTry
+Program.Sub.Main.End
+
+Program.Sub.Catching.Start
+v.Local.sError.declare
+F.Intrinsic.String.Build("Project: {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}","GCG_5814_PyrlExport.g2u",V.Ambient.NewLine,v.Args.sub,V.Args.errorno,V.args.errordesc,V.Local.sError)
+f.Intrinsic.UI.Msgbox(v.Local.sError)
+F.Intrinsic.Control.CallSub("Unload")
+Program.Sub.Catching.End
+
+Program.Sub.UnLoad.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+
+	F.Intrinsic.Control.If(V.ODBC.conx.Exists)
+		F.ODBC.Connection!conx.close
+	F.Intrinsic.Control.EndIf	
+	f.Intrinsic.Control.End
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: {0}{1}Subroutine: {2}{1}Subroutine called from:{6}{1}Error Occurred: {3}{1}Description: {4}{1}GAB Version: {5}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,v.Ambient.SubroutineCalledFrom,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.End	
+F.Intrinsic.Control.EndTry
+Program.Sub.UnLoad.End
+
+Program.Sub.SS_Form1_Unload.Start
+F.Intrinsic.Control.CallSub("Unload")
+Program.Sub.SS_Form1_Unload.End
+
+Program.Sub.cmd_txtFile_Click.Start
+F.Intrinsic.Control.Try
+	V.Local.sError.Declare
+	V.Local.sFileName.Declare
+	V.Local.bValid.Declare
+	v.Local.sRunTime.Declare
+	v.Local.sRunDate.Declare	
+	
+	f.Intrinsic.String.Mid(v.Passed.888888,9,6,v.Local.sRunTime)
+	f.Intrinsic.String.Left(v.Passed.888888,8,v.Local.sRunDate)
+	
+	F.Intrinsic.String.Build("{0}\Custom\5814\{1}\EPI_{1}_{2}_{3}.csv",v.Caller.GlobalDir,v.Caller.CompanyCode,v.Local.sRunDate,v.Local.sRunTime,V.Local.sFileName)
+	F.Intrinsic.UI.ShowSaveFileDialog(V.Local.sFileName,".csv",V.Local.sFileName)
+	F.Intrinsic.Control.If(V.Local.sFileName.Trim,=,"***CANCEL***")
+		F.Intrinsic.Control.ExitSub
+	F.Intrinsic.Control.EndIf	
+	gui.SS_Form1.txtFile.Text(v.Local.sFileName)
+
+f.Intrinsic.Control.catch
+	f.Intrinsic.Control.CallSub("catching","sub",v.Ambient.CurrentSubroutine,"errorno",v.Ambient.ErrorNumber,"errordesc",v.Ambient.ErrorDescription)
+f.Intrinsic.Control.EndTry
+Program.Sub.cmd_txtFile_Click.End
+
+Program.Sub.cmdok_click.Start
+F.Intrinsic.Control.Try
+	V.Local.sError.Declare	
+	V.Local.smsg.Declare
+	
+	gui.SS_Form1..Visible(false)
+	F.Intrinsic.String.Build("Writing {0} file",V.Screen.SS_Form1!txtFile.Text,V.Local.smsg)
+	f.Intrinsic.UI.InvokeWaitDialog(v.Local.sMsg,"ADP Payroll Export")
+	
+	f.Intrinsic.Control.CallSub("collectdata")
+	f.Intrinsic.UI.CloseWaitDialog
+	f.Intrinsic.Control.CallSub("ss_form1_unload")
+
+f.Intrinsic.Control.catch
+	f.Intrinsic.Control.CallSub("catching","sub",v.Ambient.CurrentSubroutine,"errorno",v.Ambient.ErrorNumber,"errordesc",v.Ambient.ErrorDescription)
+f.Intrinsic.Control.EndTry
+Program.Sub.cmdok_click.End
+
+Program.Sub.collectData.Start
+F.Intrinsic.Control.Try
+	V.Local.sError.Declare
+	v.Local.sRunTime.Declare
+	v.Local.sRunDate.Declare
+	v.Local.sLineTxt.Declare
+	v.local.sCOCode.Declare
+	v.local.sBatchID.Declare	
+	v.Local.sSel.Declare
+	v.Local.iCount.Declare
+	v.Local.iC.Declare
+	v.Local.sFilter.Declare
+	v.Local.sRet.Declare
+	v.Local.sComment1.Declare
+	v.local.sEmp.Declare
+	v.Local.fRT.Declare
+	v.Local.fOT.Declare
+	v.Local.fHT.Declare
+	v.Local.fV.Declare
+	v.Local.fS.Declare
+	
+	v.Local.sRT.Declare
+	v.Local.sOT.Declare
+	v.Local.sHT.Declare	
+	v.Local.sV.Declare
+	v.Local.sS.Declare	
+	
+	v.Local.sFileNum.Declare	
+	
+	f.ODBC.Connection!Con.OpenCompanyConnection	
+	
+	'Company Code and Batch ID
+	v.local.sCOCode.Set(v.Screen.SS_Form1!txtCCC.text)
+	v.local.sBatchID.Set(v.Screen.SS_Form1!txtBBB.text)
+	
+	'Date and Time
+	f.Intrinsic.String.Mid(v.Passed.888888,9,6,v.Local.sRunTime)
+	f.Intrinsic.String.Left(v.Passed.888888,8,v.Local.sRunDate)
+	
+	'For Testing
+'	v.Local.sRunDate.Set("20191127")
+'	v.Local.sRunTime.Set("115752")
+	
+	'look for all records for the selected pay period	
+	f.Intrinsic.String.Build(" select COMMENTS_1,Convert(Hours,SQL_Float) as Hours,Type,EC,Descr ,case when ucase(TYPE) = 'EC' and ltrim(rtrim(EC)) = '03' then Convert(Hours,SQL_Float) Else Convert(0,sql_float) end V ,case when ucase(TYPE) = 'EC' and ltrim(rtrim(EC)) = '02' then Convert(Hours,SQL_Float)  Else Convert(0,sql_float)  end S  from Pyrl_Labor_Xfer  Join v_EMPLOYEE_MSTR on Pyrl_Labor_Xfer.employee = v_EMPLOYEE_MSTR.employee  where run_cymd = '{0}' and run_time = '{1}' order by Comments_1,Type,EC,Descr ",v.Local.sRunDate,v.Local.sRunTime,v.Local.sSel)	
+	f.Data.DataTable.CreateFromSQL("DTPyrl","con",v.Local.sSel,True)
+	f.Data.DataView.Create("DTPyrl","DVPyrl")
+	
+	Function.Data.DataView.ToDataTableDistinct("DTPyrl","DVPyrl","DTPyrlNew","Comments_1")
+		
+	'v.Local.sLineTxt.Set("Co Code,Batch ID,File #,Pay Type,Batch Description,Reg Hours,O/T Hours,Hours 4 Code,Hours 4 Amount,Hours 4 Code,Hours 4 Amount,Hours 3 Code,Hours 3 Amount,Hours 4 Code,Hours 4 Amount,Hours 3 Code,Hours 3 Amount")	
+	v.Local.sLineTxt.Set("Co Code,Batch ID,File #,Reg Hours,O/T Hours,Hours 3 Code,Hours 3 Amount,Hours 3 Code,Hours 3 Amount,Hours 3 Code,Hours 3 Amount")
+	f.Intrinsic.Control.For(v.Local.iCount,0,v.DataTable.DTPyrlNew.RowCount--,1)
+		'File #
+		f.Intrinsic.String.LPad(v.DataTable.DTPyrlNew(v.Local.iCount).COMMENTS_1!fieldValTrim,"0",6,v.Local.sFileNum)
+		'Filter by Comments 1
+		v.Local.sComment1.Set(v.DataTable.DTPyrlNew(v.Local.iCount).Comments_1!fieldValTrim)
+		'RT
+		f.Intrinsic.String.Build("Comments_1 = '{0}' and Type = 'RT'",v.Local.sComment1,v.Local.sFilter)		
+		f.Data.DataTable.Compute("DTPyrl","Sum([Hours])",v.Local.sFilter,v.Local.sRet)
+		v.Local.fRT.Set(v.Local.sRet)
+		'OT
+		f.Intrinsic.String.Build("Comments_1 = '{0}' and Type = 'OT'",v.Local.sComment1,v.Local.sFilter)		
+		f.Data.DataTable.Compute("DTPyrl","Sum([Hours])",v.Local.sFilter,v.Local.sRet)
+		v.Local.fOT.Set(v.Local.sRet)		
+		'HT
+		f.Intrinsic.String.Build("Comments_1 = '{0}' and Type = 'HT'",v.Local.sComment1,v.Local.sFilter)		
+		f.Data.DataTable.Compute("DTPyrl","Sum([Hours])",v.Local.sFilter,v.Local.sRet)
+		v.Local.fHT.Set(v.Local.sRet)		
+		'V
+		f.Intrinsic.String.Build("Comments_1 = '{0}'",v.Local.sComment1,v.Local.sFilter)		
+		f.Data.DataTable.Compute("DTPyrl","Sum([V])",v.Local.sFilter,v.Local.sRet)
+		v.Local.fV.Set(v.Local.sRet)	
+		'S
+		f.Intrinsic.String.Build("Comments_1 = '{0}'",v.Local.sComment1,v.Local.sFilter)		
+		f.Data.DataTable.Compute("DTPyrl","Sum([S])",v.Local.sFilter,v.Local.sRet)
+		v.Local.fS.Set(v.Local.sRet)	
+		
+		f.Intrinsic.String.Build("{0}{1}{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12}",v.Local.sLineTxt,v.Ambient.NewLine,"SCE",v.Caller.CompanyCode,v.local.sFileNum,v.Local.fRT,v.Local.fOT,"V",v.Local.fV,"S",v.Local.fS,"HT",v.Local.fHT,v.Local.sLineTxt)
+
+	f.Intrinsic.Control.Next(v.Local.iCount)	
+
+	f.Intrinsic.File.String2File(v.screen.SS_Form1!txtFile.text,v.Local.sLineTxt)
+	
+	f.Data.Dataview.Close("DTPyrl","DVPyrl")
+	f.Data.DataTable.Close("DTPyrl")
+	f.Data.DataTable.Close("DTPyrlNew")
+	f.ODBC.Connection!Con.Close
+
+f.Intrinsic.Control.catch
+f.Intrinsic.Control.CallSub("catching","sub",v.Ambient.CurrentSubroutine,"errorno",v.Ambient.ErrorNumber,"errordesc",v.Ambient.ErrorDescription)
+f.Intrinsic.Control.EndTry
+Program.Sub.collectData.End
+
+Program.Sub.Comments.Start
+${$0$}$$}$SUPERVSR$}$9/24/2019 10:28:57 AM$}$True
+${$5$}$2.0.0.0$}$2
+${$6$}$anogueradeanda$}$20221130104920155$}$Brc4ySiax1SYsBxo6PAUD1l1uxdiUizTmPmbMh+robjPyY3sEw/Ob4IJp4q8U07f2A5sdBq4ewJD2d79+3cYWZ9dSk78KmJm
+Program.Sub.Comments.End
